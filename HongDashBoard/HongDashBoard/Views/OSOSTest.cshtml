@@ -1,0 +1,312 @@
+﻿
+@{
+    ViewBag.Title = "OSOSTest";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<style type="text/css">
+   
+    .jarviswidget td:first-child, .jarviswidget th:first-child {
+        border-left: none;
+    }
+
+    #box {
+        display: flex;
+        justify-content: space-between;
+    }
+
+    .button {
+        /*display: block;*/
+        width: 115px;
+        height: 40px;
+        background: #4E9CAF;
+        padding: 10px;
+        text-align: center;
+        border-radius: 5px;
+        color: white;
+        font-weight: bold;
+        line-height: 25px;
+    }
+    .red-background {
+        background-color: red;
+    }
+
+    .green-background {
+        background-color: green;
+    }
+
+</style>
+<style type="text/css" media="print">
+    .det {
+        display: none;
+    }
+</style>
+<div id="main" role="main" ng-app="HongReport">
+    <div ng-controller="OSOSTestController">
+        <script src="~/AngularApp/Reports/Hong/HongReports.js"></script>
+        <script src="~/AngularApp/Reports/Hong/OSOSTest.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/1.3.3/jspdf.min.js"></script>
+        <div id="ribbon">
+            <span class="ribbon-button-alignment">
+                <i class="fa fa-lg fa-fw fa-home"></i>
+            </span>
+            <!-- breadcrumb -->
+            <ol class="breadcrumb">
+                <li><a href="/Home"> @ERP.WebUI.Models.Resource1.Home</a></li>
+                <li>@ERP.WebUI.Models.Resource1.ReportsAndStatistics</li>
+                <li>@ERP.WebUI.Models.Resource1.reports</li>
+                <li>@ERP.WebUI.Models.Resource1.OperationReports</li>
+                <li>Hong</li>
+                <li>OSOSTest</li>
+
+            </ol>
+        </div>
+        <div ng-show="loader" ng-init="Title='OSOSTest'">
+            <img src="../../../Content/Images/loader.gif" />
+        </div>
+        <div ng-hide="loader">
+
+            <div class="jarviswidget jarviswidget-color-darken" >
+
+                <header>
+                    <h2>OSOSTest</h2>
+                </header>
+                <div class="widget-body">
+                    <div>
+                        <div class="row" >
+                            <div class="col-md-3">
+                                <div class="form-group">
+                                    <label>Model </label>
+                                    <select kendo-combo-box
+                                            k-placeholder="'Select Model'"
+                                            k-data-text-field="'ModelNumber'"
+                                            k-data-value-field="'ModelDesciptionId'"
+                                            k-filter="'contains'"
+                                            k-auto-bind="true"
+                                            k-ng-model="Model"
+                                            ng-model="ModelId"
+                                            k-data-source="ModelList"
+                                            style="width: 100%"
+                                            k-on-change=""
+                                            validationmessage="Select Model"
+                                            id=""></select>
+                                                                
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+
+                                <div class="form-group">
+                                    <label>According to  </label>
+                                    <select kendo-combo-box
+                                            k-placeholder="'Select Stage'"
+                                            k-data-text-field="'Name'"
+                                            k-data-value-field="'Id'"
+                                            k-filter="'contains'"
+                                            k-auto-bind="true"
+                                            k-ng-model="Stage"
+                                            ng-model="StageId"
+                                            k-data-source="Stages"
+                                            style="width: 100%"
+                                            k-on-change=""
+                                            validationmessage="Select Stage"
+                                            id=""></select>
+                                </div>
+                            </div>
+                            <div class="col-md-3">
+
+                                <div class="form-group">
+                                    <label>Specific Stages  </label>
+                                    <select kendo-combo-box
+                                            k-placeholder="'Select Stage'"
+                                            k-data-text-field="'Name'"
+                                            k-data-value-field="'Id'"
+                                            k-filter="'contains'"
+                                            k-auto-bind="true"
+                                            k-ng-model="SpecificStage"
+                                            ng-model="SpecificStageId"
+                                            k-data-source="SpecificStages"
+                                            style="width: 100%"
+                                            k-on-change="GetData(Model.SizeGroupingNameId,ModelId,SpecificStageId)"
+                                            validationmessage="Select Stage"
+                                            id=""></select>
+                                </div>
+                            </div>
+
+                        </div>
+                        <div ng-show="ShowData && !loader" >
+                            <table class="table table-striped table-condensed table-advance table-hover table-bordered"ng-show="StageId==1">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center;width:10px">Code</th>
+                                        <th style="text-align: center;width:100px">Name</th>
+                                        <th style="text-align: center;">Colors</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="Item in Data.PSOTMNStages">
+                                        <td style="text-align:center;vertical-align:middle">{{Item.serialNumber}}</td>
+                                        <td style="text-align:center;vertical-align:middle">{{Item.NameAr}}</td>
+                                        <td>
+                                            <div ng-if="Model.SizeGroupingNameId > 0">
+                                                <div ng-show="Data.SizeList.length > 0">
+                                                    <table class="table table-hover table-striped table-bordered data-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Color</th>
+                                                                <th>@ERP.WebUI.Models.Resource1.Total</th>
+                                                                <th></th>
+                                                                <th class="text-center" ng-repeat="size in Data.SizeList">
+                                                                    {{size.Size}}
+                                                                </th>
+                                                               
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody ng-repeat="Color in Item.ColorSizeValues track by $index">
+                                                            <!-- Loop over each color -->
+                                                            <tr style="border-top:2px solid black">
+                                                                <td style="height: 5px; font-size: 14px; text-align:center;vertical-align:middle" rowspan="4">{{Color.ColorName}}</td>
+                                                                <td style="height: 5px" class="text-center">
+                                                                    <label style="height: 5px; font-size: 14px;">{{Color.TotalValues}}</label>
+                                                                </td>
+                                                                <td style="height: 5px; font-size: 14px;">Request</td>
+
+                                                                <!-- Loop over SizeValue dictionary -->
+                                                                <td style="height: 5px" class="text-center" ng-repeat="(sizeKey, sizeValue) in Color.SizeValue">
+                                                                    <label style="height: 5px; font-size: 14px; ">{{Color.SizeValue[sizeKey]}}</label>
+                                                                </td>
+                                                               
+                                                            </tr>
+                                                            
+                                                            <tr>
+                                                                <td style="height: 5px" class="text-center">
+                                                                    <label style="height: 5px; font-size: 14px;">{{Color.TotalValuesDone}}</label>
+                                                                </td>
+                                                                <td style="height: 5px">Done</td>
+                                                                <td style="height:5px" class="text-center" ng-repeat="(sizeKey, sizeValue) in Color.SizeValue">
+                                                                    <label style="height: 5px; font-size: 14px;">{{Color.SizeValueDone[sizeKey]}}</label>
+
+                                                                </td>
+                                                               
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="height: 5px" class="text-center">
+                                                                    <label style="height: 5px; font-size: 14px;">{{Color.TotalValuesRemaining}}</label>
+                                                                </td>
+                                                                <td style="height: 5px">Remaining</td>
+                                                                <td style="height:5px" class="text-center" ng-repeat="(sizeKey, sizeValue) in Color.SizeValue">
+                                                                    <label style="height: 5px; font-size: 14px;">{{Color.SizeValueRemain[sizeKey]}}</label>
+
+                                                                </td>
+                                                               
+                                                            </tr>
+                                                            <tr>
+                                                                <td style="height: 5px" class="text-center" ng-class="{'red-background': Color.TotalValuesPercent == 0,'green-background': Color.TotalValuesPercent == 100}">
+                                                                    <label style="height: 5px; font-size: 14px;">{{Color.TotalValuesPercent}}%</label>
+                                                                </td>
+                                                                <td style="height: 5px">Percentage</td>
+                                                                <td style="height:5px"
+                                                                    class="text-center"
+                                                                    ng-repeat="(sizeKey, sizeValue) in Color.SizeValue"
+                                                                    ng-class="{'red-background': Color.SizeValuePercent[sizeKey] == 0,'green-background': Color.SizeValuePercent[sizeKey] == 100}">
+                                                                    <label style="height: 5px; font-size: 14px;">
+                                                                        {{Color.SizeValuePercent[sizeKey]}}%
+                                                                    </label>
+                                                                </td>
+
+                                                               
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                            <table class="table table-striped table-condensed table-advance table-hover table-bordered" ng-show="StageId==2">
+                                <thead>
+                                    <tr>
+                                        <th style="text-align: center;width:10px">Code</th>
+                                        <th style="text-align: center;width:100px">Name</th>
+                                        <th style="text-align: center;">Colors by Employee</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="Item in Data.PSOTMNStages">
+                                        <td style="text-align:center;vertical-align:middle">{{Item.serialNumber}}</td>
+                                        <td style="text-align:center;vertical-align:middle">{{Item.NameAr}}</td>
+                                        <td>
+                                            <div ng-if="Model.SizeGroupingNameId > 0">
+                                                <div ng-show="Data.SizeList.length > 0">
+                                                    <table class="table table-hover table-striped table-bordered data-table">
+                                                        <thead>
+                                                            <tr>
+                                                                <th>Employee Code</th>
+                                                                <th>Color</th>
+                                                                <th>Total</th>
+                                                                <th></th>
+                                                                <th class="text-center" ng-repeat="size in Data.SizeList">
+                                                                    {{size.Size}}
+                                                                </th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody ng-repeat="Color in Item.ColorSizeDoneValue track by $index">
+                                                            <tr style="border-top:2px solid black">
+                                                                <td rowspan="4" style="text-align:center;vertical-align:middle">{{Color.EmployeeName}}</td>
+                                                                <td rowspan="4" style="text-align:center;vertical-align:middle">{{Color.ColorName}}</td>
+                                                                
+                                                                <td class="text-center">{{Color.TotalValues}}</td>
+                                                                <td>Request</td>
+                                                                <td class="text-center" ng-repeat="(sizeKey, sizeValue) in Color.SizeValue">
+                                                                    {{sizeValue}}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="text-center">{{Color.TotalValuesDone}}</td>
+                                                                <td>Done</td>
+                                                                <td class="text-center" ng-repeat="(sizeKey, sizeValue) in Color.SizeValueDone">
+                                                                    {{sizeValue}}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="text-center">{{Color.TotalValuesRemaining}}</td>
+                                                                <td>Remaining</td>
+                                                                <td class="text-center" ng-repeat="(sizeKey, sizeValue) in Color.SizeValueRemain" >
+                                                                    {{sizeValue}}
+                                                                </td>
+                                                            </tr>
+                                                            <tr>
+                                                                <td class="text-center" ng-class="{'red-background': Color.TotalValuesPercent == 0,'green-background': Color.TotalValuesPercent == 100}">{{Color.TotalValuesPercent}}%</td>
+                                                                <td>Percentage</td>
+                                                                <td class="text-center" ng-repeat="(sizeKey, sizeValue) in Color.SizeValuePercent" ng-class="{'red-background': sizeValue == 0,'green-background': sizeValue == 100}">
+                                                                    {{sizeValue}}%
+                                                                </td>
+                                                            </tr>
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="hide" id="Footer">
+                <center>
+                    <a class="btn btn-lg btn-danger" href="SellingConfig/HongReports">@ERP.WebUI.Models.Resource1.Back  </a>
+
+                </center>
+            </div>
+
+
+        </div>
+    </div>
+</div>
+
+
+
